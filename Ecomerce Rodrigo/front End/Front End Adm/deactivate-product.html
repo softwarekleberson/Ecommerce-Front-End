@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <title>Deactivate Book</title>
+    <link rel="stylesheet" href="/css-global/form.css">
+</head>
+
+<body>
+
+    <form id="form">
+
+        <fieldset>
+            <legend>Deactivate Product</legend>
+
+            <div class="form-group">
+                <label for="idLivro">Product ID:</label>
+                <input type="number" id="idLivro" name="idLivro" placeholder="Product ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="justificativa">Justification:</label>
+                <textarea id="justificativa" name="justificativa"
+                    placeholder="What is the justification for removing this product from the homepage?" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Category:</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="OUT_OF_MARKET">Out of Market</option>
+                    <option value="OUTDATED">Outdated</option>
+                    <option value="LOW_DEMAND">Low Demand</option>
+                    <option value="SENSITIVE_CONTENT">Sensitive Content</option>
+                </select>
+            </div>
+
+            <button type="submit">Submit</button>
+            <button type="reset">Clear</button>
+        </fieldset>
+    </form>
+</body>
+<script src="deactivate-book/put-deactivate-book.js"></script>
+
+</html>

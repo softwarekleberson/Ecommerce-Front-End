@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <title>Stock Entry Form</title>
+    <link rel="stylesheet" href="/css-global/form.css">
+</head>
+
+<body>
+    <form id="form">
+
+        <fieldset>
+            <legend>Register Stock Entry</legend>
+
+            <div class="form-group">
+                <label for="idLivro">Product ID</label>
+                <input type="number" id="idLivro" name="idLivro" placeholder="Product ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade">Quantity</label>
+                <input type="number" id="quantidade" name="quantidade" min="0"
+                    placeholder="Number of product added to stock" required>
+            </div>
+
+            <div class="form-group">
+                <label for="valorCusto">Cost Price</label>
+                <input type="number" id="valorCusto" name="valorCusto" min="0" step="0.01" placeholder="Greater than 0"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="dataEntrada">Entry Date</label>
+                <input type="date" id="dataEntrada" name="dataEntrada" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fornecedor">Supplier</label>
+                <input type="text" id="fornecedor" name="fornecedor" required>
+            </div>
+
+            <div class="form-group">
+                <label for="estadoProduto">Product Condition</label>
+                <select id="estadoProduto" name="estadoProduto" required>
+                    <option value="NEW">New</option>
+                    <option value="USED_LIKE_NEW">Like New</option>
+                    <option value="USED">Used</option>
+                    <option value="DAMAGED">Damaged</option>
+                </select>
+            </div>
+
+            <button type="submit">Register</button>
+            <button type="reset">Clear</button>
+        </fieldset>
+
+    </form>
+</body>
+<script src="estoque/post.js"></script>
+
+</html>

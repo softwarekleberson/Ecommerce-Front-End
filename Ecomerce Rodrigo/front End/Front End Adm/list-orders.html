@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <title>Order Data</title>
+    <link rel="stylesheet" href="/list-orders/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Product Orders</h1>
+        <a href="transit.html" target="_blank" rel="noopener noreferrer">Goods in Transit</a>
+        <a href="delivered.html" target="_blank" rel="noopener noreferrer">Delivered Goods</a>
+
+        <table id="pedidos-table">
+            <thead>
+                <tr>
+                    <th>Order Code</th>
+                    <th>Book Name</th>
+                    <th>Quantity</th>
+                    <th>Order Date</th>
+                    <th>Payment Status</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Orders will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer" id="total-pedidos">
+        <p>Total Orders: 0</p>
+    </div>
+
+    <script src="adm-lista-pedidos/lista-pedidos-pagos.js"></script>
+
+</body>
+
+</html>

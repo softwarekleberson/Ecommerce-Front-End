@@ -1,0 +1,14 @@
+#Iniciar o projeto de teste
+npm init playwright@latest
+
+npx playwright test
+
+#Ui dos testes (f5) roda todos
+npx playwright test --ui
+
+#Rodar teste manualmente
+npx playwright test update-delivery.spec.ts --headed  
+
+#Rodar teste manual
+npx playwright test manual-navigation.spec.ts --headed --project=chromium
+
