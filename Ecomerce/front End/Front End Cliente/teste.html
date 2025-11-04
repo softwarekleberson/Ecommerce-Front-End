@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - Ecommerce</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+        }
+
+        .product-info h2 {
+            margin-top: 0;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .description {
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .options {
+            margin: 1rem 0;
+        }
+
+        .add-to-cart {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #218838;
+        }
+
+        .product-details {
+            margin-top: 2rem;
+        }
+
+        .details-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .specs ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .specs li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reviews {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .review {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .product-detail {
+                flex-direction: column;
+            }
+
+            .details-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Loja Online</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Produtos</a>
+            <a href="#">Carrinho</a>
+        </nav>
+    </header>
+
+    <main class="product-detail">
+        <div class="product-image">
+            <img src="https://via.placeholder.com/500x500?text=Produto" alt="Imagem do Produto">
+        </div>
+        <div class="product-info">
+            <h2>Nome do Produto</h2>
+            <p class="price">R$ 99,99</p>
+            <p class="description">Descrição detalhada do produto. Aqui você pode adicionar informações sobre
+                características, benefícios e especificações técnicas para convencer o cliente.</p>
+            <div class="options">
+                <label for="size">Tamanho:</label>
+                <select id="size">
+                    <option>P</option>
+                    <option>M</option>
+                    <option>G</option>
+                </select>
+            </div>
+            <button class="add-to-cart">Adicionar ao Carrinho</button>
+
+            <!-- Seção de Informações Detalhadas -->
+            <div class="product-details">
+                <div class="details-tabs">
+                    <button class="tab-button active" onclick="openTab(event, 'specs')">Especificações</button>
+                    <button class="tab-button" onclick="openTab(event, 'features')">Características</button>
+                    <button class="tab-button" onclick="openTab(event, 'shipping')">Entrega</button>
+                </div>
+                <div id="specs" class="tab-content active">
+                    <h4>Especificações Técnicas</h4>
+                    <ul class="specs">
+                        <li><strong>Dimensões:</strong> 30cm x 20cm x 10cm</li>
+                        <li><strong>Material:</strong> Algodão 100%</li>
+                        <li><strong>Peso:</strong> 500g</li>
+                        <li><strong>Cor:</strong> Azul</li>
+                        <li><strong>Garantia:</strong> 1 ano</li>
+                    </ul>
+                </div>
+                <div id="features" class="tab-content">
+                    <h4>Características</h4>
+                    <p>Este produto é resistente à água, leve e confortável. Ideal para uso diário ou esportivo. Inclui
+                        acessórios extras como bolsa de transporte.</p>
+                </div>
+                <div id="shipping" class="tab-content">
+                    <h4>Informações de Entrega</h4>
+                    <p>Entrega gratuita para compras acima de R$ 150. Prazo de 3-5 dias úteis. Rastreamento disponível.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="reviews">
+        <h3>Avaliações</h3>
+        <div class="review">
+            <p><strong>João:</strong> Produto excelente, recomendo!</p>
+            <span>⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="review">
+            <p><strong>Maria:</strong> Chegou rápido e em perfeito estado.</p>
+            <span>⭐⭐⭐⭐</span>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Loja Online. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+
+</html>

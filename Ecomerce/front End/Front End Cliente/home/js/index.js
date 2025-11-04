@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Separar por tipo
     const books = produtos.filter(p => p.type === "book");
-    const bags  = produtos.filter(p => p.type === "bag");
+    const bags = produtos.filter(p => p.type === "bag");
 
     // Containers
     const booksContainer = document.getElementById("books-container");
-    const bagsContainer  = document.getElementById("bags-container");
+    const bagsContainer = document.getElementById("bags-container");
 
     // Render books
     books.forEach(book => {
@@ -29,9 +29,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
       booksContainer.appendChild(card);
 
-      // Evento para Detalhes
+      // Evento para Detalhes - Redireciona para página específica de livros
       card.querySelector('.btn-details').addEventListener('click', () => {
-        window.location.href = `details.html?id=${book.id}`;
+        window.location.href = `book-details.html?id=${book.id}`;
       });
     });
 
@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
       bagsContainer.appendChild(card);
 
-      // Evento para Detalhes
+      // Evento para Detalhes - Redireciona para página específica de bolsas
       card.querySelector('.btn-details').addEventListener('click', () => {
-        window.location.href = `details.html?id=${bag.id}`;
+        window.location.href = `bag-details.html?id=${bag.id}`;
       });
     });
 

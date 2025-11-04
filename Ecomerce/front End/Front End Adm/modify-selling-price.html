@@ -13,7 +13,7 @@
     <form id="form">
 
         <fieldset>
-            <legend>Activate Product</legend>
+            <legend>Modify Selling Price</legend>
 
             <div class="form-group">
                 <label for="productId">Product ID:</label>
@@ -21,18 +21,8 @@
             </div>
 
             <div class="form-group">
-                <label for="justification">Justification</label>
-                <textarea id="justification" name="justification"
-                    placeholder="What is the justification for reactivating this book?" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" name="category" required>
-                    <option value="">Select a category</option>
-                    <option value="REACTIVATION">Reactivation</option>
-                    <option value="PUBLIC_PETITION">Public Petition</option>
-                </select>
+                <label for="newPrice">New Price Selling Product</label>
+                <textarea id="newPrice" name="newPrice" placeholder="Price selling product" required></textarea>
             </div>
         </fieldset>
 
@@ -40,6 +30,6 @@
         <button type="reset">Clear</button>
     </form>
 </body>
-<script src="activate-product/activate-book.js"></script>
+<script src="product/modify-selling-price.js"></script>
 
 </html>

@@ -12,28 +12,31 @@
 <body>
 
     <form id="form">
-
         <fieldset>
             <legend>Deactivate Product</legend>
 
             <div class="form-group">
-                <label for="idLivro">Product ID:</label>
-                <input type="number" id="idLivro" name="idLivro" placeholder="Product ID" required>
+                <label for="productId">Product ID:</label>
+                <input type="text" id="productId" name="productId" placeholder="Product ID" required>
             </div>
 
             <div class="form-group">
-                <label for="justificativa">Justification:</label>
-                <textarea id="justificativa" name="justificativa"
-                    placeholder="What is the justification for removing this product from the homepage?" required></textarea>
+                <label for="justification">Justification:</label>
+                <textarea id="justification" name="justification"
+                    placeholder="What is the justification for removing this product from the homepage?"
+                    required></textarea>
             </div>
 
             <div class="form-group">
-                <label for="categoria">Category:</label>
-                <select id="categoria" name="categoria" required>
-                    <option value="OUT_OF_MARKET">Out of Market</option>
-                    <option value="OUTDATED">Outdated</option>
-                    <option value="LOW_DEMAND">Low Demand</option>
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="LOW_SALES">Low Sales</option>
+                    <option value="STRATEGIC_WITHDRAWAL">Strategic Withdrawal</option>
+                    <option value="REGISTRATION_ERROR">Registration Error</option>
                     <option value="SENSITIVE_CONTENT">Sensitive Content</option>
+                    <option value="OUT_OF_MARKET">Out_Of_Market</option>
+                    <option value="EXPIRED">Expired</option>
+                    <option value="OUT_OF_STOCK">Out_Of_Stock</option>
                 </select>
             </div>
 
@@ -41,7 +44,9 @@
             <button type="reset">Clear</button>
         </fieldset>
     </form>
+
+    <script src="deactivate-product/deactivate-book.js"></script>
+
 </body>
-<script src="deactivate-book/put-deactivate-book.js"></script>
 
 </html>
