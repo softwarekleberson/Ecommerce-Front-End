@@ -1,27 +1,24 @@
-// --- Controle de mídias dinâmicas ---
 document.getElementById('addMedia').addEventListener('click', () => {
     const container = document.getElementById('mediaContainer');
     const index = container.children.length;
     const div = document.createElement('div');
     div.className = 'media-group';
     div.innerHTML = `
-        <label>Media URL</label>
-        <input type="url" name="midias[${index}].url">
+      <label>Media URL</label>
+      <input type="url" name="midias[${index}].url">
 
-        <label>Media Description</label>
-        <input type="text" name="midias[${index}].description">
-    `;
+      <label>Media Description</label>
+      <input type="text" name="midias[${index}].description">
+  `;
     container.appendChild(div);
 });
 
-// --- Envio do formulário ---
 document.getElementById('productForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
     const data = {};
 
-    // Converte o FormData em objeto JSON
     formData.forEach((value, key) => {
         const match = key.match(/midias\[(\d+)\]\.(\w+)/);
         if (match) {
@@ -35,7 +32,6 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
         }
     });
 
-    // Conversão de tipos
     if (data.pricing) data.pricing = parseFloat(data.pricing);
     if (data.page) data.page = parseInt(data.page, 10);
     if (data.height) data.height = parseFloat(data.height);
@@ -46,11 +42,21 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
 
     console.log("Data prepared for sending:", data);
 
+    // 🔑 Recupera o token salvo no login
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Authentication token not found. Please log in again.");
+        window.location.href = "/login.html";
+        return;
+    }
+
     try {
-        const response = await fetch("http://localhost:8080/products", {
+        const response = await fetch("http://localhost:8080/adm/product", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // 👉 Token JWT no header
             },
             body: JSON.stringify(data)
         });
@@ -61,20 +67,18 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
 
         alert("Product successfully registered!");
 
-        // Limpa o formulário e reseta as mídias
         e.target.reset();
         document.getElementById('mediaContainer').innerHTML = `
-            <div class="media-group">
-                <label>Media URL</label>
-                <input type="url" name="midias[0].url">
+      <div class="media-group">
+        <label>Media URL</label>
+        <input type="url" name="midias[0].url">
 
-                <label>Media Description</label>
-                <input type="text" name="midias[0].description">
-            </div>
-        `;
-
+        <label>Media Description</label>
+        <input type="text" name="midias[0].description">
+      </div>
+    `;
     } catch (error) {
-        console.error("❌ Error sending product.:", error);
-        alert("Error registering the product. Check the console..");
+        console.error("Error sending product:", error);
+        alert("Error registering the product. Check the console.");
     }
 });

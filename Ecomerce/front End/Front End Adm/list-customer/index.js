@@ -4,7 +4,7 @@ const filterInactiveBtn = document.getElementById("filter-inactive");
 const filterAllBtn = document.getElementById("filter-all");
 const searchInput = document.getElementById("search");
 
-let allCustomers = []; // Aqui guardamos todos os clientes recebidos da API
+let allCustomers = []; // Armazena todos os clientes recebidos da API
 
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -37,19 +37,34 @@ function renderCustomers(customers) {
 }
 
 async function loadCustomers() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Authentication token not found. Please log in again.");
+        window.location.href = "/login.html";
+        return;
+    }
+
     try {
-        const response = await fetch("http://localhost:8080/adm/customers");
-        if (!response.ok) throw new Error("Erro ao buscar clientes");
+        const response = await fetch("http://localhost:8080/adm", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: Unable to fetch customers`);
+        }
 
         allCustomers = await response.json();
         renderCustomers(allCustomers);
     } catch (error) {
-        console.error(error);
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">Erro ao carregar clientes</td></tr>`;
+        console.error("Error loading customers:", error);
+        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">Error loading customers</td></tr>`;
     }
 }
 
-// Filtros
+// 🔍 Filtros
 filterActiveBtn.addEventListener("click", () => {
     const activeCustomers = allCustomers.filter(c => c.systemClientStatus);
     renderCustomers(activeCustomers);
@@ -64,7 +79,7 @@ filterAllBtn.addEventListener("click", () => {
     renderCustomers(allCustomers);
 });
 
-// Busca por nome, email ou telefone
+// 🔎 Busca dinâmica
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
     const filtered = allCustomers.filter(c =>
@@ -75,5 +90,5 @@ searchInput.addEventListener("input", () => {
     renderCustomers(filtered);
 });
 
-// Inicializa
+// 🚀 Inicializa
 window.addEventListener("DOMContentLoaded", loadCustomers);

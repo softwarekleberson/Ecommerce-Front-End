@@ -10,11 +10,21 @@ document.addEventListener("DOMContentLoaded", () => {
             category: document.getElementById("category").value
         };
 
+        // 🔑 Recupera o token JWT armazenado
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Authentication token not found. Please log in again.");
+            window.location.href = "/login.html";
+            return;
+        }
+
         try {
-            const response = await fetch("http://localhost:8080/products/activate", {
+            const response = await fetch("http://localhost:8080/adm/product/activate", {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // ✅ Token incluído
                 },
                 body: JSON.stringify(data)
             });
@@ -23,11 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 let errorMessage = "An unexpected error occurred while processing the request.";
 
                 try {
-
                     const error = await response.json();
                     errorMessage = error.message || errorMessage;
                 } catch {
-
                     const text = await response.text();
                     errorMessage = text || errorMessage;
                 }
@@ -35,14 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(errorMessage);
             }
 
+            // Caso o backend retorne 204 No Content
             if (response.status === 204) {
-                alert("Product successfully activet!");
+                alert("Product successfully activated!");
                 form.reset();
                 return;
             }
 
+            // Caso venha resposta JSON
             const result = await response.json();
-            alert(`Product successfully activet!\n\nProduct ID: ${result.productId}`);
+            alert(`Product successfully activated!\n\nProduct ID: ${result.productId}`);
             form.reset();
 
         } catch (error) {

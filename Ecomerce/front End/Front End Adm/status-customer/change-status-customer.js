@@ -2,35 +2,41 @@ document.getElementById("form").addEventListener("submit", async function (event
     event.preventDefault();
 
     const form = event.target;
-    const customerId = document.getElementById("customerId").value;
+    const customerId = document.getElementById("customerId").value.trim();
+    const token = localStorage.getItem("token"); // 🔑 recupera o token
+
+    if (!token) {
+        alert("Authentication token not found. Please log in again.");
+        window.location.href = "/login.html";
+        return;
+    }
 
     try {
-        const response = await fetch("http://localhost:8080/adm/customers/change-status", {
+        const response = await fetch("http://localhost:8080/adm/change-status", {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // 🛡️ token JWT
             },
-            body: JSON.stringify({
-                customerId: customerId
-            })
+            body: JSON.stringify({ customerId })
         });
 
         if (response.ok) {
             alert("Customer status changed successfully!");
-            form.reset(); // 🔹 limpa o formulário
+            form.reset();
         } else {
-            // 🔹 tenta pegar mensagem do seu handler
+            // 🔹 tenta ler a mensagem de erro do backend
             let errorMsg = "Error changing status.";
             try {
                 const errorData = await response.json();
-                if (errorData.message) {
-                    errorMsg = errorData.message;
-                }
+                if (errorData.message) errorMsg = errorData.message;
             } catch {
-                errorMsg = await response.text();
+                const text = await response.text();
+                if (text) errorMsg = text;
             }
             alert(errorMsg);
         }
+
     } catch (error) {
         console.error("Request error:", error);
         alert("Server connection error.");

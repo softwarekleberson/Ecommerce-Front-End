@@ -6,14 +6,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = {
             productId: document.getElementById("productId").value.trim(),
-            newPrice: document.getElementById("newPrice").value.trim(),
+            newPrice: parseFloat(document.getElementById("newPrice").value.trim())
         };
 
+        // 🔑 Recupera o token JWT
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Authentication token not found. Please log in again.");
+            window.location.href = "/login.html";
+            return;
+        }
+
         try {
-            const response = await fetch("http://localhost:8080/products/selling/price", {
+            const response = await fetch("http://localhost:8080/adm/product/selling/price", {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // ✅ token adicionado
                 },
                 body: JSON.stringify(data)
             });
@@ -22,11 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 let errorMessage = "An unexpected error occurred while processing the request.";
 
                 try {
-
                     const error = await response.json();
                     errorMessage = error.message || errorMessage;
                 } catch {
-
                     const text = await response.text();
                     errorMessage = text || errorMessage;
                 }
@@ -35,13 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (response.status === 204) {
-                alert("Price product successfully change!");
+                alert("Product price successfully updated!");
                 form.reset();
                 return;
             }
 
             const result = await response.json();
-            alert(`Price product successfully change!\n\nProduct ID: ${result.productId}`);
+            alert(`Product price successfully updated!\n\nProduct ID: ${result.productId}`);
             form.reset();
 
         } catch (error) {

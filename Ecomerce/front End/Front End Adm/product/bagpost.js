@@ -2,24 +2,24 @@ const form = document.getElementById('productForm');
 const addMidiaBtn = document.getElementById('addMidia');
 const midiasContainer = document.getElementById('midiasContainer');
 
-// 🧩 Add new media dynamically
+// 🧩 Adiciona nova mídia dinamicamente
 addMidiaBtn.addEventListener('click', () => {
     const index = midiasContainer.querySelectorAll('.midia-group').length;
 
     const div = document.createElement('div');
     div.classList.add('midia-group');
     div.innerHTML = `
-        <label>Media URL (${index}):</label>
-        <input type="url" name="midias[${index}].url" required>
+      <label>Media URL (${index}):</label>
+      <input type="url" name="midias[${index}].url" required>
 
-        <label>Media Description (${index}):</label>
-        <input type="text" name="midias[${index}].description" required>
-    `;
+      <label>Media Description (${index}):</label>
+      <input type="text" name="midias[${index}].description" required>
+  `;
 
     midiasContainer.appendChild(div);
 });
 
-// 🧠 Build JSON and send POST request
+// 🧠 Monta JSON e envia via POST
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -41,11 +41,23 @@ form.addEventListener('submit', async (e) => {
         }
     });
 
+    console.log("📦 Data prepared for sending:", data);
+
+    // 🔑 Recupera o token salvo no login
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Authentication token not found. Please log in again.");
+        window.location.href = "/login.html";
+        return;
+    }
+
     try {
-        const response = await fetch('http://localhost:8080/products', {
+        const response = await fetch('http://localhost:8080/adm/product', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // 👉 Envia o JWT
             },
             body: JSON.stringify(data)
         });
@@ -55,24 +67,23 @@ form.addEventListener('submit', async (e) => {
             throw new Error(`Error ${response.status}: ${errorText}`);
         }
 
-        // ✅ Success
+        // ✅ Sucesso
         alert('Product successfully registered!');
         console.log('✅ Product successfully registered!');
 
-        // 🔄 Reset the form
+        // 🔄 Reseta o formulário
         form.reset();
 
-        // 🧹 Restore only the first media input
+        // 🧹 Restaura apenas o primeiro campo de mídia
         midiasContainer.innerHTML = `
-            <div class="midia-group">
-                <label>Media URL (0):</label>
-                <input type="url" name="midias[0].url" required>
+      <div class="midia-group">
+          <label>Media URL (0):</label>
+          <input type="url" name="midias[0].url" required>
 
-                <label>Media Description (0):</label>
-                <input type="text" name="midias[0].description" required>
-            </div>
-        `;
-
+          <label>Media Description (0):</label>
+          <input type="text" name="midias[0].description" required>
+      </div>
+    `;
     } catch (error) {
         console.error('❌ Error sending product:', error);
         alert('Error registering product. Check console for details.');
