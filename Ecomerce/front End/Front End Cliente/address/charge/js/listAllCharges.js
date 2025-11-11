@@ -1,21 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
     const userList = document.getElementById('user-list');
+    const token = localStorage.getItem("token");
 
-    const params = new URLSearchParams(window.location.search);
-    const clienteId = params.get("id");
+    if (!token) {
+        alert("Your session has expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
 
-    async function carregarEntregas() {
+    async function carregarCobrancas() {
         try {
-            const response = await fetch(`http://localhost:8080/customers/${clienteId}`, {
-                method: 'GET'
+            const response = await fetch(`http://localhost:8080/customer/me`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
             });
 
             if (!response.ok) {
+                const text = await response.text();
+                console.error("Server response:", response.status, text);
                 throw new Error('Error loading billing: ' + response.statusText);
             }
 
             const data = await response.json();
-
             userList.innerHTML = '';
 
             // Card fixo para adicionar nova cobrança
@@ -24,22 +32,23 @@ document.addEventListener('DOMContentLoaded', function () {
             cardFixo.innerHTML = `
                 <h2>Add Billing</h2>
                 <div class="actions">
-                    <a class="link" href="create-charge.html?id=${clienteId}">Add</a>
+                    <a class="link" href="create-charge.html">Add</a>
                 </div>
             `;
             userList.appendChild(cardFixo);
 
-            if (Array.isArray(data.charges)) {
-                data.charges.forEach(entrega => {
+            // Verifica se há cobranças
+            if (Array.isArray(data.charges) && data.charges.length > 0) {
+                data.charges.forEach(cobranca => {
                     const div = document.createElement('div');
                     div.classList.add('card');
 
                     div.innerHTML = `
-                        <h3>${entrega.receiver}</h3>
-                        <p>${entrega.street}</p>
-                        <p>${entrega.typeResidence} - ${entrega.number} ${entrega.observation ?? ''}</p>
-                        <p>${entrega.city}, ${entrega.state} ${entrega.zipCode}</p>
-                        <p>${entrega.country}</p>
+                        <h3>${cobranca.receiver}</h3>
+                        <p>${cobranca.street}</p>
+                        <p>${cobranca.typeResidence} - ${cobranca.number} ${cobranca.observation ?? ''}</p>
+                        <p>${cobranca.city}, ${cobranca.state} ${cobranca.zipCode}</p>
+                        <p>${cobranca.country}</p>
                     `;
 
                     const actionsDiv = document.createElement('div');
@@ -51,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     deleteLink.textContent = "Delete";
                     deleteLink.addEventListener('click', (e) => {
                         e.preventDefault();
-                        excluirEntrega(clienteId, entrega.id);
+                        excluirCobranca(cobranca.id);
                     });
 
                     // Separador
@@ -60,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Botão Edit
                     const editLink = document.createElement('a');
-                    editLink.href = `update-charge.html?id=${clienteId}&entregaId=${entrega.id}`;
+                    editLink.href = `update-charge.html?entregaId=${cobranca.id}`;
                     editLink.textContent = "Edit";
 
                     actionsDiv.appendChild(deleteLink);
@@ -71,32 +80,51 @@ document.addEventListener('DOMContentLoaded', function () {
                     userList.appendChild(div);
                 });
             } else {
-                console.error('Unexpected data format:', data);
+                const emptyMsg = document.createElement('p');
+                userList.appendChild(emptyMsg);
             }
 
         } catch (error) {
             console.error("Error loading billing:", error);
+            alert("Failed to load billing information.");
         }
     }
 
-    carregarEntregas();
+    carregarCobrancas();
 });
 
-async function excluirEntrega(clienteId, idEntrega) {
+async function excluirCobranca(idCobranca) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
+
     if (confirm("Are you sure you want to delete this billing?")) {
         try {
-            const response = await fetch(`http://localhost:8080/customers/${clienteId}/charges/${idEntrega}`, {
-                method: 'DELETE'
+            const response = await fetch(`http://localhost:8080/customer/charge/${idCobranca}`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to delete billing');
+                const text = await response.text();
+                console.error("Delete response:", response.status, text);
+                alert("Failed to delete billing.");
+                return;
             }
 
             alert("Billing deleted successfully!");
             location.reload();
+
         } catch (error) {
             console.error("Error deleting billing:", error);
+            alert("Error deleting billing. Please try again.");
+            window.location.href = "login.html";
         }
     }
 }

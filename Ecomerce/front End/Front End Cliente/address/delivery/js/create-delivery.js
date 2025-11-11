@@ -1,8 +1,12 @@
 document.getElementById("form").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const params = new URLSearchParams(window.location.search);
-    const clientId = params.get("id");
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in to add a delivery address.");
+        window.location.href = "login.html";
+        return;
+    }
 
     const formData = {
         receiver: document.getElementById("receiver").value,
@@ -16,35 +20,48 @@ document.getElementById("form").addEventListener("submit", async function (event
         city: document.getElementById("city").value,
         state: document.getElementById("state").value,
         country: document.getElementById("country").value,
-        deliveryPhrase: document.getElementById("deliveryPhrase").value
+        deliveryPhrase: document.getElementById("deliveryPhrase").value,
+        main: document.getElementById("main").value === "true" // transforma o valor do select em booleano
     };
 
+    // Validação básica
+    if (!formData.receiver || !formData.zipCode || !formData.city || !formData.state || !formData.street) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    const submitBtn = document.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+
     try {
-        const response = await fetch(`http://localhost:8080/customers/${clientId}/deliveries`, {
+        const response = await fetch("http://localhost:8080/customer/delivery", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token")
+                "Authorization": "Bearer " + token
             },
             body: JSON.stringify(formData)
         });
 
         if (!response.ok) {
-            let errorMsg = "Error saving address";
-
-            try {
-                const error = await response.json();
-                if (error.message) {
-                    errorMsg = error.message;
-                } else if (error.error) {
-                    errorMsg = error.error;
-                }
-            } catch (e) {
-                console.warn("Error reading error response:", e);
+            if (response.status === 401 || response.status === 403) {
+                alert("Session expired. Please log in again.");
+                localStorage.removeItem("token");
+                window.location.href = "login.html";
+                return;
             }
 
-            alert(errorMsg);
-            return;
+            let errorMsg = "Error saving address";
+            try {
+                const error = await response.json();
+                errorMsg = error.message || error.error || errorMsg;
+            } catch {
+                const text = await response.text();
+                if (text) errorMsg = text;
+            }
+
+            throw new Error(errorMsg);
         }
 
         alert("Address saved successfully!");
@@ -53,6 +70,9 @@ document.getElementById("form").addEventListener("submit", async function (event
 
     } catch (error) {
         console.error("Unexpected error:", error);
-        alert("Server connection failure.");
+        alert(error.message || "Server connection failure.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save";
     }
 });

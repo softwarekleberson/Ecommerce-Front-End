@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // Faz a requisição GET para o backend
-        const response = await fetch(`http://localhost:8080/products/${productId}`);
+        const response = await fetch(`http://localhost:8080/public/product/${productId}`);
 
         if (!response.ok) {
             throw new Error(`Failed to load product. Status: ${response.status}`);
@@ -43,6 +43,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) {
         console.error("Error loading product details:", error);
-        alert("Error loading product details. Please try again later.");
     }
 });

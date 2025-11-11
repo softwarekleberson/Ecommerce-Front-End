@@ -1,8 +1,12 @@
 document.getElementById("form").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const params = new URLSearchParams(window.location.search);
-    const clientId = params.get("id");
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in to update your profile.");
+        window.location.href = "login.html";
+        return;
+    }
 
     const formData = {
         name: document.getElementById("name").value,
@@ -13,26 +17,42 @@ document.getElementById("form").addEventListener("submit", async function (event
     };
 
     try {
-        const response = await fetch(`http://localhost:8080/customers/${clientId}`, {
+        const response = await fetch("http://localhost:8080/customer/me", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token") 
+                "Authorization": "Bearer " + token
             },
             body: JSON.stringify(formData)
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "Error updating client");
+            if (response.status === 403 || response.status === 401) {
+                alert("Session expired. Please log in again.");
+                localStorage.removeItem("token");
+                window.location.href = "login.html";
+                return;
+            }
+
+            let errorMsg = "Error updating client.";
+            try {
+                const error = await response.json();
+                errorMsg = error.message || error.error || errorMsg;
+            } catch {
+                const text = await response.text();
+                if (text) errorMsg = text;
+            }
+
+            throw new Error(errorMsg);
         }
 
-        alert("client updated successfully!");
+        alert("Client updated successfully!");
         document.getElementById("form").reset();
         window.location.href = "index.html";
 
     } catch (error) {
         console.error("Error updating client:", error);
-        alert("Unable to update client.");
+        alert(error.message || "Unable to update client.");
+        window.location.href = "login.html";
     }
 });

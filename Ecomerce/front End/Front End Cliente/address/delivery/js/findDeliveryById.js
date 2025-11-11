@@ -1,24 +1,47 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const params = new URLSearchParams(window.location.search);
     const deliveryId = params.get("entregaId");
-    const customerId = params.get("id"); 
+
+    // 🔐 Recupera o token salvo após o login
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
 
     try {
-        const response = await fetch(`http://localhost:8080/customers/${customerId}`);
+        // ✅ Busca os dados do cliente autenticado
+        const response = await fetch("http://localhost:8080/customer/me", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
 
         if (!response.ok) {
-            throw new Error("Failed to fetch customer data");
+            if (response.status === 401 || response.status === 403) {
+                alert("Session expired. Please log in again.");
+                localStorage.removeItem("token");
+                window.location.href = "login.html";
+                return;
+            }
+            throw new Error("Error retrieving customer data.");
         }
 
         const customer = await response.json();
         const deliveries = customer.deliveres || [];
-        const delivery = deliveries.find(d => d.id === deliveryId);
+
+        // 🔍 Localiza a entrega a ser editada
+        const delivery = deliveries.find(d => d.id == deliveryId);
 
         if (!delivery) {
-            alert("Delivery not found.");
+            alert("Delivery address not found.");
             return;
         }
 
+        // 🧾 Preenche o formulário com os dados da entrega
         document.getElementById("receiver").value = delivery.receiver || "";
         document.getElementById("zipCode").value = delivery.zipCode || "";
         document.getElementById("typeResidence").value = delivery.typeResidence || "";
@@ -31,9 +54,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("state").value = delivery.state || "";
         document.getElementById("deliveryPhrase").value = delivery.deliveryPhrase || "";
         document.getElementById("country").value = delivery.country || "";
-    
+
     } catch (err) {
-        console.error(err);
-        alert("Error loading customer deliveries.");
+        console.error("Error loading deliveries:", err);
+        alert("We were unable to load the deliveries. Please try again later.");
+        window.location.href = "login.html";
     }
 });

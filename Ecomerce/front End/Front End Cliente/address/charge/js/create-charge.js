@@ -1,9 +1,6 @@
 document.getElementById("form").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const params = new URLSearchParams(window.location.search);
-    const clientId = params.get("id");
-
     const formData = {
         receiver: document.getElementById("receiver").value,
         zipCode: document.getElementById("zipCode").value,
@@ -15,21 +12,30 @@ document.getElementById("form").addEventListener("submit", async function (event
         observation: document.getElementById("observation").value,
         city: document.getElementById("city").value,
         state: document.getElementById("state").value,
-        country: document.getElementById("country").value
+        country: document.getElementById("country").value,
+        main: document.getElementById("main").value === "true" // converte "true"/"false" em boolean
     };
 
     try {
-        const response = await fetch(`http://localhost:8080/customers/${clientId}/charges`, {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("User not authenticated. Please log in again.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const response = await fetch("http://localhost:8080/customer/charge", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token")
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(formData)
         });
 
         if (!response.ok) {
-            let errorMsg = "Error saving address";
+            let errorMsg = "Error saving address.";
 
             try {
                 const error = await response.json();
@@ -52,6 +58,7 @@ document.getElementById("form").addEventListener("submit", async function (event
 
     } catch (error) {
         console.error("Unexpected error:", error);
-        alert("Server connection failure.");
+        alert("Connection to the server failed.");
+        window.location.href = "login.html";
     }
 });

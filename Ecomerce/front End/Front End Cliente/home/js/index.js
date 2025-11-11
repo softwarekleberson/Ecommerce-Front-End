@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const response = await fetch("http://localhost:8080/products");
+    const response = await fetch("http://localhost:8080/public/product");
     if (!response.ok) throw new Error(`Erro: ${response.status}`);
 
     const produtos = await response.json();
